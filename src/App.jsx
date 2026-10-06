@@ -20,7 +20,7 @@ export default function App() {
   const [toDelete, setToDelete] = useState(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState(null);
-
+  const brands = [];
   const notify = (text, type = "ok") => {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3000);
@@ -41,7 +41,7 @@ export default function App() {
     load();
   }, [load]);
   if (mobiles.length) {
-    const brands = useMemo(
+    brands = useMemo(
       () => [...new Set(mobiles.map((m) => m.brand))].sort(),
       [mobiles],
     );
