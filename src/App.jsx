@@ -41,10 +41,11 @@ export default function App() {
     load();
   }, [load]);
   if (mobiles.length) {
-    brands = useMemo(
-      () => [...new Set(mobiles.map((m) => m.brand))].sort(),
-      [mobiles],
-    );
+    // brands = useMemo(
+    //   () => [...new Set(mobiles.map((m) => m.brand))].sort(),
+    //   [mobiles],
+    // );
+    brands = mobiles.map((m) => m.brand).sort();
   }
 
   const visible = useMemo(() => {
