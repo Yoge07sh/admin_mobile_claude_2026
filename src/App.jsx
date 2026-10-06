@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createMobile, deleteMobile, errorMessage, getMobiles, updateMobile } from "./api";
+import {
+  createMobile,
+  deleteMobile,
+  errorMessage,
+  getMobiles,
+  updateMobile,
+} from "./api";
 import MobileCard from "./components/MobileCard";
 import MobileForm from "./components/MobileForm";
 import ConfirmDialog from "./components/ConfirmDialog";
@@ -34,15 +40,19 @@ export default function App() {
   useEffect(() => {
     load();
   }, [load]);
-
-  const brands = useMemo(() => [...new Set(mobiles.map((m) => m.brand))].sort(), [mobiles]);
+  if (mobiles.length) {
+    const brands = useMemo(
+      () => [...new Set(mobiles.map((m) => m.brand))].sort(),
+      [mobiles],
+    );
+  }
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
     return mobiles.filter(
       (m) =>
         (!brand || m.brand === brand) &&
-        (!q || [m.name, m.brand, m.color].join(" ").toLowerCase().includes(q))
+        (!q || [m.name, m.brand, m.color].join(" ").toLowerCase().includes(q)),
     );
   }, [mobiles, search, brand]);
 
@@ -52,7 +62,7 @@ export default function App() {
       units: mobiles.reduce((s, m) => s + m.stock, 0),
       value: mobiles.reduce((s, m) => s + m.stock * m.price, 0),
     }),
-    [mobiles]
+    [mobiles],
   );
 
   const openAdd = () => {
@@ -73,7 +83,9 @@ export default function App() {
     try {
       if (editing) {
         const updated = await updateMobile(editing._id, data);
-        setMobiles((list) => list.map((m) => (m._id === updated._id ? updated : m)));
+        setMobiles((list) =>
+          list.map((m) => (m._id === updated._id ? updated : m)),
+        );
         notify("Changes saved");
       } else {
         const created = await createMobile(data);
@@ -109,13 +121,21 @@ export default function App() {
           <h1>Mobile Store 2026</h1>
           <p className="sub">Admin panel</p>
         </div>
-        <button className="btn primary" onClick={openAdd}>+ Add mobile</button>
+        <button className="btn primary" onClick={openAdd}>
+          + Add mobile
+        </button>
       </header>
 
       <section className="stats">
-        <div><span>{stats.models}</span>Models</div>
-        <div><span>{stats.units}</span>Units in stock</div>
-        <div><span>₹{stats.value.toLocaleString("en-IN")}</span>Stock value</div>
+        <div>
+          <span>{stats.models}</span>Models
+        </div>
+        <div>
+          <span>{stats.units}</span>Units in stock
+        </div>
+        <div>
+          <span>₹{stats.value.toLocaleString("en-IN")}</span>Stock value
+        </div>
       </section>
 
       <section className="filters">
@@ -137,20 +157,45 @@ export default function App() {
         <p className="state">Loading mobiles…</p>
       ) : visible.length === 0 ? (
         <div className="state empty">
-          <p>{mobiles.length === 0 ? "No mobiles in the store yet." : "No mobiles match your search."}</p>
-          {mobiles.length === 0 && <button className="btn primary" onClick={openAdd}>Add your first mobile</button>}
+          <p>
+            {mobiles.length === 0
+              ? "No mobiles in the store yet."
+              : "No mobiles match your search."}
+          </p>
+          {mobiles.length === 0 && (
+            <button className="btn primary" onClick={openAdd}>
+              Add your first mobile
+            </button>
+          )}
         </div>
       ) : (
         <main className="list">
           {visible.map((m) => (
-            <MobileCard key={m._id} mobile={m} onEdit={openEdit} onDelete={setToDelete} />
+            <MobileCard
+              key={m._id}
+              mobile={m}
+              onEdit={openEdit}
+              onDelete={setToDelete}
+            />
           ))}
         </main>
       )}
 
-      {formOpen && <MobileForm initial={editing} onSubmit={save} onClose={closeForm} saving={busy} />}
+      {formOpen && (
+        <MobileForm
+          initial={editing}
+          onSubmit={save}
+          onClose={closeForm}
+          saving={busy}
+        />
+      )}
       {toDelete && (
-        <ConfirmDialog mobile={toDelete} onConfirm={confirmDelete} onCancel={() => setToDelete(null)} busy={busy} />
+        <ConfirmDialog
+          mobile={toDelete}
+          onConfirm={confirmDelete}
+          onCancel={() => setToDelete(null)}
+          busy={busy}
+        />
       )}
       {toast && <div className={`toast ${toast.type}`}>{toast.text}</div>}
     </div>
