@@ -20,7 +20,7 @@ export default function App() {
   const [toDelete, setToDelete] = useState(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState(null);
-  const brands = [];
+  let brands = [];
   const notify = (text, type = "ok") => {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3000);
